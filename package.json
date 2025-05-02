@@ -8,5 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "MIT",
-  "description": "Redis clone in Node.js"
+  "description": "Redis clone in Node.js",
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  }
 }
