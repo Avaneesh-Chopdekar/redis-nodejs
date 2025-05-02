@@ -11,7 +11,9 @@ const host = process.env.HOST || "127.0.0.1";
 server.on("connection", (socket) => {
   socket.on("data", (data) => {
     const request = data.toString().trim();
-    socket.write(`Response: ${request}`);
+    logger.log(request);
+
+    socket.write("+OK\r\n"); // Respond with a simple OK message
   });
 
   socket.on("end", () => {
