@@ -1,6 +1,7 @@
 import net from "net";
 import "dotenv/config";
 import loggerFn from "./logger.js";
+import { parseCommand } from "./core.js";
 
 const logger = loggerFn("server");
 
@@ -10,10 +11,11 @@ const host = process.env.HOST || "127.0.0.1";
 
 server.on("connection", (socket) => {
   socket.on("data", (data) => {
-    const request = data.toString().trim();
-    logger.log(request);
+    const requestData = data.toString().trim();
+    logger.log(requestData);
+    const { command, args } = parseCommand(requestData);
 
-    socket.write("+OK\r\n"); // Respond with a simple OK message
+    socket.write("+OK\r\n");
   });
 
   socket.on("end", () => {
