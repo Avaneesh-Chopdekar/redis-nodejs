@@ -18,3 +18,31 @@ export const parseCommand = (data) => {
 
   return { command, args };
 };
+
+const commandHandlers = {
+  PING: () => "+PONG\r\n",
+  COMMAND: () => "+OK\r\n",
+  INFO: () => "+OK\r\n",
+  SET: () => {
+    // implementation for SET command
+    return "+OK\r\n";
+  },
+  GET: (key) => {
+    // implementation for GET command
+    return `$${key.length}\r\n${key}\r\n`;
+  },
+};
+
+export const executeCommand = (command, args) => {
+  if (!command) {
+    logger.error("No command provided");
+    return "-ERR no command\r\n";
+  }
+  const handler = commandHandlers[command];
+  if (!handler) {
+    logger.error(`Unknown command: ${command}`);
+    return "-ERR unknown command\r\n";
+  }
+
+  return handler(args);
+};
