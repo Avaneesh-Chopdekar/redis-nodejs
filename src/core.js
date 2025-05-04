@@ -1,3 +1,4 @@
+import { parse } from "node:path";
 import loggerFn from "./utils/logger.js";
 
 const logger = loggerFn("core");
@@ -108,6 +109,29 @@ const commandHandlers = {
     const ttl = Math.floor((expirationTimes[key] - Date.now()) / 1000);
 
     return ttl > 0 ? `:${ttl}\r\n` : ":-2\r\n";
+  },
+  INCR: (args) => {
+    if (args.length < 1) {
+      return "-ERR wrong number of arguments for 'incr' command\r\n";
+    }
+
+    const [key] = args;
+    if (checkExpiration(key)) {
+      return "-ERR key expired\r\n";
+    }
+
+    if (!store[key]) {
+      store[key] = { type: "string", value: "1" };
+
+      return ":1\r\n";
+    }
+
+    const value = parseInt(store[key].value, 10);
+
+    if (isNaN(value)) return "-ERR value is not an integer or out of range\r\n";
+    store[key].value = (value + 1).toString();
+
+    return `:${value + 1}\r\n`;
   },
 };
 
