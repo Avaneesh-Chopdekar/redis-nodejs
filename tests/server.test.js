@@ -2,7 +2,7 @@ import net from "net";
 import "dotenv/config";
 import assert from "node:assert";
 import { before, after, test } from "node:test";
-import { buildRedisCommand } from "./utils.js";
+import { buildRedisCommand } from "../src/utils.js";
 
 let redisClient; // Redis client instance
 const port = process.env.PORT || 6379;
