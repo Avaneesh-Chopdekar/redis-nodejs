@@ -238,6 +238,26 @@ const commandHandlers = {
 
     return `$${value.length}\r\n${value}\r\n`;
   },
+  RPOP: (args) => {
+    if (args.length < 1) {
+      return "-ERR wrong number of arguments for 'rpop' command\r\n";
+    }
+
+    const [key] = args;
+
+    if (
+      checkExpiration(key) ||
+      !store[key] ||
+      store[key].type !== "list" ||
+      store[key].value.length === 0
+    ) {
+      return "$-1\r\n";
+    }
+
+    const value = store[key].value.pop();
+
+    return `$${value.length}\r\n${value}\r\n`;
+  },
 };
 
 export const executeCommand = (command, args) => {
