@@ -1,6 +1,6 @@
 import net from "net";
 import "dotenv/config";
-import loggerFn from "./logger.js";
+import loggerFn from "./utils/logger.js";
 import { parseCommand, executeCommand, init } from "./core.js";
 
 const logger = loggerFn("server");

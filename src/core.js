@@ -1,4 +1,4 @@
-import loggerFn from "./logger.js";
+import loggerFn from "./utils/logger.js";
 
 const logger = loggerFn("core");
 
