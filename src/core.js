@@ -218,6 +218,26 @@ const commandHandlers = {
 
     return response;
   },
+  LPOP: (args) => {
+    if (args.length < 1) {
+      return "-ERR wrong number of arguments for 'lpop' command\r\n";
+    }
+
+    const [key] = args;
+
+    if (
+      checkExpiration(key) ||
+      !store[key] ||
+      store[key].type !== "list" ||
+      store[key].value.length === 0
+    ) {
+      return "$-1\r\n";
+    }
+
+    const value = store[key].value.shift();
+
+    return `$${value.length}\r\n${value}\r\n`;
+  },
 };
 
 export const executeCommand = (command, args) => {
