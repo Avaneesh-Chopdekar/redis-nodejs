@@ -1,11 +1,15 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "node:url";
 
 import loggerFn from "./utils/logger.js";
 
 const logger = loggerFn("persistence");
 
 const fsp = fs.promises;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class Persistence {
   DATA_FILE = path.join(__dirname, "data.rdb");

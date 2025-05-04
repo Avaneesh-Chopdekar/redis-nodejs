@@ -1,10 +1,10 @@
-import { parse } from "node:path";
 import loggerFn from "./utils/logger.js";
+import { persistence } from "./persistence.js";
+import { config } from "./config.js";
 
 const logger = loggerFn("core");
 
-const store = {};
-const expirationTimes = {};
+const { store, expirationTimes } = persistence;
 
 const isExpired = (key) =>
   expirationTimes[key] && expirationTimes[key] < Date.now();
@@ -275,5 +275,14 @@ export const executeCommand = (command, args) => {
 };
 
 export const init = () => {
-  logger.info("Persistence mode: 'in-memory'");
+  if (config.snapshot) {
+    logger.info("Persistence mode: 'snapshot'");
+    persistence.loadSnapshotSync();
+
+    setInterval(async () => {
+      await persistence.saveSnapshot();
+    }, config.snapshotInterval);
+  } else {
+    logger.info("Persistence mode: 'in-memory'");
+  }
 };
