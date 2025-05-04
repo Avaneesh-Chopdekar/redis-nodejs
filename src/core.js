@@ -175,6 +175,25 @@ const commandHandlers = {
 
     return `:${store[key].value.length}\r\n`;
   },
+  RPUSH: (args) => {
+    if (args.length < 2) {
+      return "-ERR wrong number of arguments for 'rpush' command\r\n";
+    }
+
+    const [key, ...values] = args;
+
+    if (!store[key]) {
+      store[key] = { type: "list", value: [] };
+    }
+
+    if (store[key].type !== "list") {
+      return "-ERR wrong type of key\r\n";
+    }
+
+    store[key].value.push(...values);
+
+    return `:${store[key].value.length}\r\n`;
+  },
   LRANGE: (args) => {
     if (args.length < 3) {
       return "-ERR wrong number of arguments for 'lrange' command\r\n";
