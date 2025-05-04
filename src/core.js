@@ -175,6 +175,30 @@ const commandHandlers = {
 
     return `:${store[key].value.length}\r\n`;
   },
+  LRANGE: (args) => {
+    if (args.length < 3) {
+      return "-ERR wrong number of arguments for 'lrange' command\r\n";
+    }
+
+    const [key, start, stop] = args;
+
+    if (checkExpiration(key) || !store[key] || store[key].type !== "list") {
+      return "$-1\r\n";
+    }
+
+    const list = store[key].value;
+    const startIndex = parseInt(start, 10);
+    const stopIndex = parseInt(stop, 10);
+    const range = list.slice(startIndex, stopIndex + 1);
+
+    let response = `*${range.length}\r\n`;
+
+    range.forEach((value) => {
+      response += `$${value.length}\r\n${value}\r\n`;
+    });
+
+    return response;
+  },
 };
 
 export const executeCommand = (command, args) => {
