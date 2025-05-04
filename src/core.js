@@ -28,9 +28,9 @@ export const parseCommand = (data) => {
   const command = lines[2].toUpperCase();
   const args = lines.slice(4).filter((_, index) => index % 2 === 0);
 
-  //   logger.log(command);
-  //   logger.log(args);
-  //   logger.log(lines);
+  //   logger.info(command);
+  //   logger.info(args);
+  //   logger.info(lines);
 
   return { command, args };
 };
@@ -108,4 +108,8 @@ export const executeCommand = (command, args) => {
   }
 
   return handler(args);
+};
+
+export const init = () => {
+  logger.info("Persistence mode: 'in-memory'");
 };
