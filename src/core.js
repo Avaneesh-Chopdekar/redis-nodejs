@@ -156,6 +156,25 @@ const commandHandlers = {
 
     return `:${value - 1}\r\n`;
   },
+  LPUSH: (args) => {
+    if (args.length < 2) {
+      return "-ERR wrong number of arguments for 'lpush' command\r\n";
+    }
+
+    const [key, ...values] = args;
+
+    if (!store[key]) {
+      store[key] = { type: "list", value: [] };
+    }
+
+    if (store[key].type !== "list") {
+      return "-ERR wrong type of key\r\n";
+    }
+
+    store[key].value.unshift(...values);
+
+    return `:${store[key].value.length}\r\n`;
+  },
 };
 
 export const executeCommand = (command, args) => {
