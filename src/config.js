@@ -1,4 +1,5 @@
 export const config = {
-  snapshot: true,
+  snapshot: false,
   snapshotInterval: 5000,
+  appendOnly: true,
 };

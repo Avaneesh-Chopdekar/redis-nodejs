@@ -135,5 +135,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-dump.rdb
-data.rdb
+*.aof
+*.rdb
