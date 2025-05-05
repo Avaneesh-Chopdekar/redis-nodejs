@@ -260,18 +260,38 @@ const commandHandlers = {
   },
 };
 
-export const executeCommand = (command, args) => {
+export const executeCommand = (command, args, replayingFromAof = false) => {
   if (!command) {
     logger.error("No command provided");
     return "-ERR no command\r\n";
   }
+
+  logger.info(
+    `Received ${command} ${args} ${
+      replayingFromAof ? "(replaying from AOF)" : ""
+    }`
+  );
+
   const handler = commandHandlers[command];
   if (!handler) {
     logger.error(`Unknown command: ${command}`);
     return "-ERR unknown command\r\n";
   }
 
-  return handler(args);
+  const result = handler(args);
+
+  if (
+    config.appendOnly &&
+    !replayingFromAof &&
+    config.aofCommands.includes(command)
+  ) {
+    persistence
+      .appendAof(command, args)
+      .then(() => {})
+      .catch(logger.error);
+  }
+
+  return result;
 };
 
 export const init = () => {
@@ -282,6 +302,9 @@ export const init = () => {
     setInterval(async () => {
       await persistence.saveSnapshot();
     }, config.snapshotInterval);
+  } else if (config.appendOnly) {
+    logger.info("Persistence mode: 'append-only'");
+    persistence.replayAofSync(executeCommand);
   } else {
     logger.info("Persistence mode: 'in-memory'");
   }
